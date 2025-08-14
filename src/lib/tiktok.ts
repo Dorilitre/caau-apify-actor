@@ -177,7 +177,7 @@ async function directScrapeTikTokShop(
     });
 
     // Extract product data
-    const products = await page.evaluate((limit) => {
+    const products = await page.evaluate((limit: number) => {
       const items: any[] = [];
       
       // Try multiple selectors for product cards
@@ -189,7 +189,7 @@ async function directScrapeTikTokShop(
         '[class*="item"]'
       ];
 
-      let productElements: NodeListOf<Element> | null = null;
+      let productElements: any = null;
       
       for (const selector of selectors) {
         productElements = document.querySelectorAll(selector);
