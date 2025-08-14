@@ -54,7 +54,7 @@ describe('mapToSupabase', () => {
     });
 
     it('should provide default title for missing title', () => {
-      const item = { ...mockCompleteItem };
+      const item = { ...mockCompleteItem } as any;
       delete item.title;
       const mapped = mapToSupabase(item);
       expect(mapped.title).toBe('Untitled Product');
@@ -66,7 +66,7 @@ describe('mapToSupabase', () => {
     });
 
     it('should fallback to product_id for platform_id', () => {
-      const item = { ...mockCompleteItem };
+      const item = { ...mockCompleteItem } as any;
       delete item.product_id_str;
       const mapped = mapToSupabase(item);
       expect(mapped.platform_id).toBe('123456789');
@@ -85,7 +85,7 @@ describe('mapToSupabase', () => {
     });
 
     it('should fallback to first img array item', () => {
-      const item = { ...mockCompleteItem };
+      const item = { ...mockCompleteItem } as any;
       delete item.cover;
       const mapped = mapToSupabase(item);
       expect(mapped.image_url).toBe('https://example.com/img1.jpg');
@@ -104,7 +104,7 @@ describe('mapToSupabase', () => {
     });
 
     it('should fallback to ceiling_price', () => {
-      const item = { ...mockCompleteItem };
+      const item = { ...mockCompleteItem } as any;
       delete item.floor_price;
       const mapped = mapToSupabase(item);
       expect(mapped.price).toBe(12999);
@@ -114,7 +114,7 @@ describe('mapToSupabase', () => {
       const item = { 
         ...mockCompleteItem,
         format_price: 'R$ 123,45'
-      };
+      } as any;
       delete item.floor_price;
       delete item.ceiling_price;
       const mapped = mapToSupabase(item);
@@ -139,7 +139,7 @@ describe('mapToSupabase', () => {
     });
 
     it('should fallback to global_sold_count', () => {
-      const item = { ...mockCompleteItem };
+      const item = { ...mockCompleteItem } as any;
       delete item.sold_count;
       const mapped = mapToSupabase(item);
       expect(mapped.orders_24h).toBe(200);
