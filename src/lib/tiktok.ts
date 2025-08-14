@@ -3,7 +3,7 @@
  */
 
 import { Actor, ProxyConfiguration } from 'apify';
-import { chromium } from 'playwright';
+import puppeteer from 'puppeteer';
 
 interface ScrapingConfig {
   region: string;
@@ -59,35 +59,42 @@ export async function scrapeTikTokShop(
 }
 
 /**
- * Fallback direct scraping implementation using Playwright
- * This is a simplified implementation that demonstrates the proxy usage pattern
+ * Direct scraping implementation using Puppeteer (pre-installed in Apify)
+ * This implementation demonstrates the proxy usage pattern for Brazilian market
  */
 async function directScrapeTikTokShop(
   config: ScrapingConfig,
   proxyConfiguration: ProxyConfiguration
 ): Promise<TikTokItem[]> {
   
-  console.log('🎭 Starting direct scraping with Playwright...');
+  console.log('🎭 Starting direct scraping with Puppeteer...');
   
   // Get proxy URL for this session - CRITICAL for Brazilian results
   const proxyUrl = await proxyConfiguration.newUrl();
   console.log('🌐 Using Brazilian residential proxy:', proxyUrl ? 'configured' : 'failed');
 
-  const browser = await chromium.launch({
+  const browser = await puppeteer.launch({
     headless: true,
-    proxy: proxyUrl ? {
-      server: proxyUrl,
-    } : undefined,
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-accelerated-2d-canvas',
+      '--no-first-run',
+      '--no-zygote',
+      '--disable-gpu',
+      proxyUrl ? `--proxy-server=${proxyUrl}` : ''
+    ].filter(Boolean),
   });
 
   try {
-    const context = await browser.newContext({
-      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-      locale: 'pt-BR',
-      timezoneId: 'America/Sao_Paulo',
+    const page = await browser.newPage();
+    
+    // Set user agent and other properties for Brazilian context
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+    await page.setExtraHTTPHeaders({
+      'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8'
     });
-
-    const page = await context.newPage();
 
     // Navigate to TikTok Shop Brazil
     const baseUrl = 'https://shop.tiktok.com/br';
