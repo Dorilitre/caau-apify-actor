@@ -28,7 +28,8 @@
       "title": "Search Keyword",
       "type": "string",
       "description": "Keyword to search for products (ignored if isTrendingProducts is true)",
-      "default": "baby"
+      "default": "baby",
+      "editor": "textfield"
     },
     "sortType": {
       "title": "Sort Type",
