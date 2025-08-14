@@ -42,13 +42,15 @@
       "title": "Minimum Price",
       "type": "number",
       "description": "Minimum price filter (optional, client-side filtering)",
-      "minimum": 0
+      "minimum": 0,
+      "editor": "number"
     },
     "maxPrice": {
       "title": "Maximum Price",
       "type": "number",
       "description": "Maximum price filter (optional, client-side filtering)",
-      "minimum": 0
+      "minimum": 0,
+      "editor": "number"
     },
     "requireBrazilSignals": {
       "title": "Require Brazil Signals",
@@ -68,7 +70,8 @@
       "description": "Maximum number of concurrent requests",
       "minimum": 1,
       "maximum": 20,
-      "default": 5
+      "default": 5,
+      "editor": "number"
     },
     "debug": {
       "title": "Debug Mode",
