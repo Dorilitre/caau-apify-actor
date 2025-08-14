@@ -13,6 +13,9 @@ COPY . ./
 # Install TypeScript compiler globally
 RUN npm install -g typescript
 
+# Install Playwright and browsers for direct scraping
+RUN npx playwright install --with-deps chromium
+
 # Build the TypeScript code using tsc directly
 RUN npx tsc
 
