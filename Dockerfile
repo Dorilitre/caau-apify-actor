@@ -1,19 +1,20 @@
 # Use the official Apify Node.js base image
-FROM apify/actor-node:18
+FROM apify/actor-node:20
 
 # Copy package files
 COPY package*.json ./
-COPY pnpm-lock.yaml* ./
 
-# Install pnpm and dependencies
-RUN npm install -g pnpm@8
-RUN pnpm install --frozen-lockfile --prod
+# Install dependencies
+RUN npm install --omit=dev
 
 # Copy source code
 COPY . ./
 
+# Install TypeScript and build tools
+RUN npm install -g typescript tsup
+
 # Build the TypeScript code
-RUN pnpm build
+RUN npm run build
 
 # Run the actor
-CMD pnpm start
+CMD npm start
