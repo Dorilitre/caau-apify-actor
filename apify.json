@@ -1,0 +1,15 @@
+{
+  "name": "tiktok-shop-br-actor",
+  "version": "1.0.0",
+  "buildTag": "latest",
+  "env": null,
+  "defaultRunOptions": {
+    "build": "latest",
+    "timeoutSecs": 3600,
+    "memoryMbytes": 4096
+  },
+  "title": "TikTok Shop BR Actor",
+  "description": "Scrapes TikTok Shop products with focus on Brazilian market. Uses residential proxy in Brazil, filters for BR signals, and outputs data mapped to Supabase products schema.",
+  "categories": ["ECOMMERCE"],
+  "dockerfile": "./Dockerfile"
+}

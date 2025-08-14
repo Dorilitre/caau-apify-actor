@@ -1,0 +1,80 @@
+{
+  "title": "TikTok Shop BR Actor Input",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "region": {
+      "title": "Region",
+      "type": "string",
+      "description": "Target region for TikTok Shop scraping. Default is BR (Brazil) for Brazilian market focus.",
+      "default": "BR",
+      "enum": ["BR", "VN", "US", "UK", "TH", "SG", "MY", "PH", "ID"]
+    },
+    "limit": {
+      "title": "Product Limit",
+      "type": "integer",
+      "description": "Maximum number of products to scrape",
+      "minimum": 1,
+      "maximum": 10000,
+      "default": 20
+    },
+    "isTrendingProducts": {
+      "title": "Trending Products",
+      "type": "boolean",
+      "description": "If true, scrapes trending products instead of search results",
+      "default": false
+    },
+    "keyword": {
+      "title": "Search Keyword",
+      "type": "string",
+      "description": "Keyword to search for products (ignored if isTrendingProducts is true)",
+      "default": "baby"
+    },
+    "sortType": {
+      "title": "Sort Type",
+      "type": "string",
+      "description": "How to sort the search results",
+      "default": "RELEVANCE",
+      "enum": ["PRICE_ASC", "PRICE_DESC", "BEST_SELLERS", "RELEVANCE"]
+    },
+    "minPrice": {
+      "title": "Minimum Price",
+      "type": "number",
+      "description": "Minimum price filter (optional, client-side filtering)",
+      "minimum": 0
+    },
+    "maxPrice": {
+      "title": "Maximum Price",
+      "type": "number",
+      "description": "Maximum price filter (optional, client-side filtering)",
+      "minimum": 0
+    },
+    "requireBrazilSignals": {
+      "title": "Require Brazil Signals",
+      "type": "boolean",
+      "description": "When active, filters results that don't appear to be from Brazil (currency BRL, warehouse in BR, etc.)",
+      "default": true
+    },
+    "dropIfNoImage": {
+      "title": "Drop If No Image",
+      "type": "boolean",
+      "description": "Discard items without valid image URLs",
+      "default": true
+    },
+    "maxConcurrency": {
+      "title": "Max Concurrency",
+      "type": "integer",
+      "description": "Maximum number of concurrent requests",
+      "minimum": 1,
+      "maximum": 20,
+      "default": 5
+    },
+    "debug": {
+      "title": "Debug Mode",
+      "type": "boolean",
+      "description": "Enable debug logging",
+      "default": false
+    }
+  },
+  "required": []
+}

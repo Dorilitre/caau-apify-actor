@@ -1,0 +1,233 @@
+{
+  "name": "TikTok Shop BR to Supabase",
+  "nodes": [
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "APIFY_TOKEN",
+              "value": ""
+            },
+            {
+              "name": "ACTOR_ID",
+              "value": "your-actor-id"
+            },
+            {
+              "name": "SUPABASE_URL",
+              "value": "https://your-project.supabase.co"
+            },
+            {
+              "name": "SUPABASE_KEY",
+              "value": ""
+            },
+            {
+              "name": "SUPABASE_TABLE",
+              "value": "products"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1",
+      "name": "Set Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.apify.com/v2/acts/{{$node[\"Set Config\"].json[\"ACTOR_ID\"]}}/runs?token={{$node[\"Set Config\"].json[\"APIFY_TOKEN\"]}}&waitForFinish=300",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "region",
+              "value": "BR"
+            },
+            {
+              "name": "limit",
+              "value": "20"
+            },
+            {
+              "name": "isTrendingProducts",
+              "value": "false"
+            },
+            {
+              "name": "keyword",
+              "value": "baby"
+            },
+            {
+              "name": "sortType",
+              "value": "RELEVANCE"
+            },
+            {
+              "name": "requireBrazilSignals",
+              "value": "true"
+            },
+            {
+              "name": "dropIfNoImage",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2",
+      "name": "Start Actor",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.apify.com/v2/datasets/{{$json.data.defaultDatasetId || $json.data.items[0].defaultDatasetId}}/items?token={{$node[\"Set Config\"].json[\"APIFY_TOKEN\"]}}",
+        "options": {}
+      },
+      "id": "3",
+      "name": "Get Dataset Items",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Map TikTok Shop items to Supabase format\nconst items = $input.all();\nconst mappedItems = [];\n\nfor (const item of items) {\n  if (item.json && Array.isArray(item.json)) {\n    // Process array of items from dataset\n    for (const dataItem of item.json) {\n      if (dataItem.mapped) {\n        mappedItems.push({ json: dataItem.mapped });\n      }\n    }\n  } else if (item.json && item.json.mapped) {\n    // Process single item\n    mappedItems.push({ json: item.json.mapped });\n  }\n}\n\nconsole.log(`Mapped ${mappedItems.length} items for Supabase`);\nreturn mappedItems;"
+      },
+      "id": "4",
+      "name": "Map to Supabase",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$node[\"Set Config\"].json[\"SUPABASE_URL\"]}}/rest/v1/{{$node[\"Set Config\"].json[\"SUPABASE_TABLE\"]}}?on_conflict=platform_id",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{$node[\"Set Config\"].json[\"SUPABASE_KEY\"]}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$node[\"Set Config\"].json[\"SUPABASE_KEY\"]}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates,return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{$items().map(i => i.json)}}",
+        "options": {}
+      },
+      "id": "5",
+      "name": "Supabase Upsert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1120,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Set Config": {
+      "main": [
+        [
+          {
+            "node": "Start Actor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start Actor": {
+      "main": [
+        [
+          {
+            "node": "Get Dataset Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Dataset Items": {
+      "main": [
+        [
+          {
+            "node": "Map to Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map to Supabase": {
+      "main": [
+        [
+          {
+            "node": "Supabase Upsert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "1",
+      "name": "tiktok-shop"
+    },
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "2",
+      "name": "supabase"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "1"
+}
