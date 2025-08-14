@@ -4,17 +4,17 @@ FROM apify/actor-node:20
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
+# Install production dependencies
 RUN npm install --omit=dev
 
 # Copy source code
 COPY . ./
 
-# Install TypeScript and build tools
-RUN npm install -g typescript tsup
+# Install TypeScript compiler globally
+RUN npm install -g typescript
 
-# Build the TypeScript code
-RUN npm run build
+# Build the TypeScript code using tsc directly
+RUN npx tsc
 
 # Run the actor
 CMD npm start
